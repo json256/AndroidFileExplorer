@@ -10,47 +10,61 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.cut"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_cut" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.copy"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_copy" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.cut"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_cut" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.paste"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_paste" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.copy"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_copy" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.selectAll"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_select" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.paste"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_paste" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.rename"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_rename" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.selectAll"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_select" />
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.share"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_share" />
+        </LinearLayout>
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.delete"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_delete" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/button.create"
-            style="@style/floatingButton"
-            android:src="@drawable/ic_plus" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.rename"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_rename" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.share"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_share" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.delete"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_delete" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/button.create"
+                style="@style/floatingButton"
+                android:src="@drawable/ic_plus" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
