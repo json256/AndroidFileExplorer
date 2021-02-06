@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">资源管理器</string>
+
+    <string name="dialog.delete">删除</string>
+    <string name="dialog.rename">重命名</string>
+    <string name="dialog.create">新建</string>
+    <string name="dialog.cancel">取消</string>
+
+    <string name="list.empty">空的</string>
+
+    <plurals name="itemAmount">
+        <item quantity="zero">%d 个条目</item>
+        <item quantity="one">1 个条目</item>
+        <item quantity="other">%d 个条目</item>
+    </plurals>
+
+    <string name="space.total">总共</string>
+    <string name="space.available">可用</string>
+
+    <string name="rename.error">重命名失败</string>
+
+    <string name="open.unable">无法打开文件</string>
+
+    <string name="clipboard.cut">正在移动…</string>
+    <string name="clipboard.copy">正在复制…</string>
+
+    <string name="create.error">新建文件夹失败</string>
+
+    <string name="delete.confirm">删除所选项目?</string>
+    <string name="delete.deleting">删除中…</string>
+    <string name="delete.error">删除失败</string>
+
+    <string name="shareFile.title">分享文件</string>
+    <string name="shareFile.unable">分享失败</string>
+    <string name="shareFiles.unable">分享失败</string>
+
+</resources>

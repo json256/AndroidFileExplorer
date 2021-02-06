@@ -17,7 +17,7 @@
         android:layout_gravity="center"
         android:ellipsize="start"
         android:gravity="center_vertical"
-        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
         android:singleLine="true"
         android:textColor="@color/white"
         android:textSize="20sp"

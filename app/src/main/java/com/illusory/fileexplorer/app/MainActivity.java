@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.StatFs;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -72,46 +73,37 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_WRITE_EXTERNAL_STORAGE: {
-                if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                    if (storageFragment != null) {
-                        storageFragment.reload();
-                    } else {
-                        FolderFragment folderFragment = fragments.peek();
-                        folderFragment.refreshFolder();
-                    }
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == PERMISSION_WRITE_EXTERNAL_STORAGE) {
+            if ((grantResults.length > 0) && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                if (storageFragment != null) {
+                    storageFragment.reload();
                 } else {
-                    finish();
+                    FolderFragment folderFragment = fragments.peek();
+                    folderFragment.refreshFolder();
                 }
+            } else {
+                finish();
             }
         }
     }
 
     private String[] storages() {
         List<String> storages = new ArrayList<>();
-        try {
-            File[] externalStorageFiles = ContextCompat.getExternalFilesDirs(this, null);
-            String base = String.format("/Android/data/%s/files", getPackageName());
 
-            for (File file : externalStorageFiles) {
-                try {
-                    if (file != null) {
-                        String path = file.getAbsolutePath();
-                        if (path.contains(base)) {
-                            String finalPath = path.replace(base, "");
-                            if (validPath(finalPath)) {
-                                storages.add(finalPath);
-                            }
-                        }
+        File[] externalStorageFiles = ContextCompat.getExternalFilesDirs(this, null);
+        String base = String.format("/Android/data/%s/files", getPackageName());
+
+        for (File file : externalStorageFiles) {
+            if (file != null) {
+                String path = file.getAbsolutePath();
+                if (path.contains(base)) {
+                    String finalPath = path.replace(base, "");
+                    if (validPath(finalPath)) {
+                        storages.add(finalPath);
                     }
-                } catch (Exception e) {
-                    CrashUtils.report(e);
                 }
             }
-        } catch (Exception e) {
-            CrashUtils.report(e);
         }
 
         String[] result = new String[storages.size()];
@@ -123,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean validPath(String path) {
         try {
             StatFs stat = new StatFs(path);
-            stat.getBlockCount();
+            stat.getBlockCountLong();
 
             return true;
         } catch (Exception e) {
@@ -200,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     @SuppressLint("MissingSuperCall")
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
         // no call for super(). Bug on API Level > 11.
     }
 }

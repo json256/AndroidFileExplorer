@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -17,10 +16,16 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.illusory.fileexplorer.R;
 import com.illusory.fileexplorer.adapters.FolderAdapter;
 import com.illusory.fileexplorer.app.MainActivity;
@@ -29,11 +34,14 @@ import com.illusory.fileexplorer.models.FileInfo;
 import com.illusory.fileexplorer.utils.CrashUtils;
 import com.illusory.fileexplorer.utils.Dialogs;
 
+import org.checkerframework.checker.nullness.qual.Nullable;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class FolderFragment extends Fragment {
     private static final String PARAMETER_FOLDER_PATH = "folder.path";
@@ -54,7 +62,7 @@ public class FolderFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         mainActivity = (MainActivity) context;
@@ -109,7 +117,8 @@ public class FolderFragment extends Fragment {
         });
 
         listView.setOnTouchListener((v, event) -> {
-            if ((event.getAction() == MotionEvent.ACTION_DOWN) && listView.pointToPosition((int) (event.getX() * event.getXPrecision()), (int) (event.getY() * event.getYPrecision())) == -1) {
+            if ((event.getAction() == MotionEvent.ACTION_DOWN) &&
+                    listView.pointToPosition((int) (event.getX() * event.getXPrecision()), (int) (event.getY() * event.getYPrecision())) == -1) {
                 onBackPressed();
 
                 return true;
@@ -216,6 +225,7 @@ public class FolderFragment extends Fragment {
     }
 
     private Intent openFileIntent(Uri uri, String type) {
+        // content://com.illusory.fileexplorer.provider/external_files/emulated/0/3D_MEDIA/Edited.mp4
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, type);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -262,25 +272,40 @@ public class FolderFragment extends Fragment {
 
         ProgressDialog dialog = Dialogs.progress(context(), message);
 
-        new AsyncTask<Void, Void, Void>() {
+        ListeningExecutorService service = MoreExecutors
+                .listeningDecorator(Executors.newFixedThreadPool(1));
+        ListenableFuture<Void> future = service.submit(() -> {
+            clipboard.paste(new FileInfo(folder()));
+            return null;
+        });
+        Futures.addCallback(future, new FutureCallback<Void>() {
             @Override
-            protected Void doInBackground(Void... params) {
-                clipboard.paste(new FileInfo(folder()));
-
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void result) {
-                try {
+            public void onSuccess(@Nullable Void result) {
+                getActivity().runOnUiThread(() -> {
                     dialog.dismiss();
-                } catch (Exception e) {
-                    CrashUtils.report(e);
-                }
-
-                refreshFolder();
+                    refreshFolder();
+                });
             }
-        }.execute();
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }, service);
+
+//        new AsyncTask<Void, Void, Void>() {
+//            @Override
+//            protected Void doInBackground(Void... params) {
+//                clipboard.paste(new FileInfo(folder()));
+//                return null;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Void result) {
+//                dialog.dismiss();
+//                refreshFolder();
+//            }
+//        }.execute();
     }
 
     public void onSelectAll() {
@@ -387,35 +412,62 @@ public class FolderFragment extends Fragment {
     private void deleteSelected(List<FileInfo> selectedItems) {
         ProgressDialog dialog = Dialogs.progress(context(), getString(R.string.delete_deleting));
 
-        new AsyncTask<Void, Void, Boolean>() {
-            @Override
-            protected Boolean doInBackground(Void... params) {
-                boolean allDeleted = true;
+        ListeningExecutorService service = MoreExecutors
+                .listeningDecorator(Executors.newFixedThreadPool(1));
+        ListenableFuture<Boolean> future = service.submit(() -> {
+            boolean allDeleted = true;
 
-                for (FileInfo fileInfo : selectedItems) {
-                    if (!fileInfo.delete()) {
-                        allDeleted = false;
-                    }
+            for (FileInfo fileInfo : selectedItems) {
+                if (!fileInfo.delete()) {
+                    allDeleted = false;
                 }
-
-                return allDeleted;
             }
 
+            return allDeleted;
+        });
+        Futures.addCallback(future, new FutureCallback<Boolean>() {
             @Override
-            protected void onPostExecute(Boolean result) {
-                try {
+            public void onSuccess(@Nullable Boolean result) {
+                getActivity().runOnUiThread(() -> {
                     dialog.dismiss();
-                } catch (Exception e) {
-                    CrashUtils.report(e);
-                }
+                    refreshFolder();
 
-                refreshFolder();
-
-                if (!result) {
-                    showMessage(R.string.delete_error);
-                }
+                    if (!result) {
+                        showMessage(R.string.delete_error);
+                    }
+                });
             }
-        }.execute();
+
+            @Override
+            public void onFailure(@NonNull Throwable t) {
+                throw new RuntimeException(t);
+            }
+        }, service);
+
+//        new AsyncTask<Void, Void, Boolean>() {
+//            @Override
+//            protected Boolean doInBackground(Void... params) {
+//                boolean allDeleted = true;
+//
+//                for (FileInfo fileInfo : selectedItems) {
+//                    if (!fileInfo.delete()) {
+//                        allDeleted = false;
+//                    }
+//                }
+//
+//                return allDeleted;
+//            }
+//
+//            @Override
+//            protected void onPostExecute(Boolean result) {
+//                dialog.dismiss();
+//                refreshFolder();
+//
+//                if (!result) {
+//                    showMessage(R.string.delete_error);
+//                }
+//            }
+//        }.execute();
     }
 
     private void renameItem(FileInfo fileInfo, String newName) {
@@ -456,7 +508,7 @@ public class FolderFragment extends Fragment {
 
     private boolean isResolvable(Intent intent) {
         PackageManager manager = mainActivity.getPackageManager();
-        List<ResolveInfo> resolveInfo = manager.queryIntentActivities(intent, 0);
+        @SuppressLint("QueryPermissionsNeeded") List<ResolveInfo> resolveInfo = manager.queryIntentActivities(intent, 0);
 
         return !resolveInfo.isEmpty();
     }
@@ -478,7 +530,7 @@ public class FolderFragment extends Fragment {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         // no call for super(). Bug on API Level > 11.
     }
 }

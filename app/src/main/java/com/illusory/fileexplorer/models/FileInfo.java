@@ -17,6 +17,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.ref.SoftReference;
@@ -133,12 +134,12 @@ public class FileInfo {
     }
 
     private void close(Closeable closeable) {
-        try {
-            if (closeable != null) {
+        if (closeable != null) {
+            try {
                 closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            CrashUtils.report(e);
         }
     }
 

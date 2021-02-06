@@ -1,7 +1,5 @@
 package com.illusory.fileexplorer.models;
 
-import com.illusory.fileexplorer.utils.CrashUtils;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +45,8 @@ public class Clipboard {
     }
 
     public void paste(FileInfo target) {
-        try {
-            for (FileInfo fileInfo : items) {
-                fileInfo.copy(target, mode == Mode.CUT);
-            }
-        } catch (Exception e) {
-            CrashUtils.report(e);
+        for (FileInfo fileInfo : items) {
+            fileInfo.copy(target, mode == Mode.CUT);
         }
 
         items.clear();

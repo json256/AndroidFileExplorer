@@ -2,6 +2,7 @@ package com.illusory.fileexplorer.app;
 
 import android.os.StrictMode;
 
+import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
 
 import com.illusory.fileexplorer.BuildConfig;
@@ -29,7 +30,7 @@ public class FileExplorer extends MultiDexApplication {
         }
     }
 
-    public class CustomExceptionHandler implements UncaughtExceptionHandler {
+    public static class CustomExceptionHandler implements UncaughtExceptionHandler {
         private final UncaughtExceptionHandler defaultHandler;
 
         public CustomExceptionHandler() {
@@ -37,7 +38,7 @@ public class FileExplorer extends MultiDexApplication {
         }
 
         @Override
-        public void uncaughtException(Thread thread, Throwable throwable) {
+        public void uncaughtException(@NonNull Thread thread, @NonNull Throwable throwable) {
             CrashUtils.report(throwable);
 
             defaultHandler.uncaughtException(thread, throwable);

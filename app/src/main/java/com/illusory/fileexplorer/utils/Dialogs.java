@@ -84,11 +84,7 @@ public class Dialogs {
 
         nameField.setOnEditorActionListener((view1, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                try {
-                    dialog.dismiss();
-                } catch (Exception e) {
-                    CrashUtils.report(e);
-                }
+                dialog.dismiss();
 
                 callback.rename(fileInfo, nameField.getText().toString());
             }
@@ -146,11 +142,7 @@ public class Dialogs {
 
         nameField.setOnEditorActionListener((view1, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                try {
-                    dialog.dismiss();
-                } catch (Exception e) {
-                    CrashUtils.report(e);
-                }
+                dialog.dismiss();
 
                 callback.create(nameField.getText().toString());
             }

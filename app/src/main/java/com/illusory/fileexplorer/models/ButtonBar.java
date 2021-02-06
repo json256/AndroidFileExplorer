@@ -1,7 +1,6 @@
 package com.illusory.fileexplorer.models;
 
 import android.content.res.Resources;
-import android.os.Build;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -30,16 +29,16 @@ public class ButtonBar {
         this.buttonDelete = parent.findViewById(R.id.button_delete);
         this.buttonCreate = parent.findViewById(R.id.button_create);
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            fixButtonMargin(parent.getResources(), buttonCut);
-            fixButtonMargin(parent.getResources(), buttonCopy);
-            fixButtonMargin(parent.getResources(), buttonPaste);
-            fixButtonMargin(parent.getResources(), buttonSelectAll);
-            fixButtonMargin(parent.getResources(), buttonRename);
-            fixButtonMargin(parent.getResources(), buttonShare);
-            fixButtonMargin(parent.getResources(), buttonDelete);
-            fixButtonMargin(parent.getResources(), buttonCreate);
-        }
+//        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+//            fixButtonMargin(parent.getResources(), buttonCut);
+//            fixButtonMargin(parent.getResources(), buttonCopy);
+//            fixButtonMargin(parent.getResources(), buttonPaste);
+//            fixButtonMargin(parent.getResources(), buttonSelectAll);
+//            fixButtonMargin(parent.getResources(), buttonRename);
+//            fixButtonMargin(parent.getResources(), buttonShare);
+//            fixButtonMargin(parent.getResources(), buttonDelete);
+//            fixButtonMargin(parent.getResources(), buttonCreate);
+//        }
 
         this.buttonCut.setVisibility(View.GONE);
         this.buttonCut.setOnClickListener(view -> {
@@ -155,7 +154,7 @@ public class ButtonBar {
 
     private void fixButtonMargin(Resources resources, View view) {
         ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
-        params.setMargins(0, dpToPx(resources, -15), dpToPx(resources, -10), dpToPx(resources, -10));
+        params.setMargins(0, dpToPx(resources, -12), dpToPx(resources, -10), dpToPx(resources, -10));
         view.setLayoutParams(params);
     }
 
