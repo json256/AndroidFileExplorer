@@ -1,6 +1,9 @@
 package com.illusory.fileexplorer.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.multidex.MultiDexApplication;
@@ -11,9 +14,12 @@ import com.illusory.fileexplorer.utils.CrashUtils;
 import java.lang.Thread.UncaughtExceptionHandler;
 
 public class FileExplorer extends MultiDexApplication {
+    public static FileExplorer application;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        application = this;
 
         Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler());
 
@@ -43,5 +49,10 @@ public class FileExplorer extends MultiDexApplication {
 
             defaultHandler.uncaughtException(thread, throwable);
         }
+    }
+
+    public void updateGallery(Uri uri) {
+        Log.i("updateGallery", uri.toString());
+        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
     }
 }

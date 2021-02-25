@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android
 {
     compileSdkVersion 30
@@ -17,17 +23,21 @@ android
 
     signingConfigs
     {
-        // debug
-        // {
-        //     storeFile file('../keystore/debug.keystore')
-        // }
+//        release
+//        {
+//            storeFile file('../keystore/keystore.jks')
+//            storePassword '111111'
+//            keyAlias 'alias'
+//            keyPassword '111111'
+//        }
 
-        release
-        {
-            storeFile file('../keystore/illusory.keystore.jks')
-            storePassword '111111'
-            keyAlias 'illusory'
-            keyPassword '111111'
+        if (keystorePropertiesFile.exists()) {
+            release {
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+            }
         }
     }
 
@@ -59,8 +69,18 @@ android
         release
         {
             minifyEnabled false
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
         }
+    }
+
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                outputFileName = "fileexplorer_${variant.name}.apk"
+            }
     }
 }
 

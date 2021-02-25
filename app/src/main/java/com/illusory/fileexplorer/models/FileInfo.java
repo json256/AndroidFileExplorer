@@ -5,11 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
+import android.util.Log;
 import android.webkit.MimeTypeMap;
 
 import androidx.core.content.FileProvider;
 
 import com.illusory.fileexplorer.BuildConfig;
+import com.illusory.fileexplorer.app.FileExplorer;
 import com.illusory.fileexplorer.utils.CrashUtils;
 import com.illusory.fileexplorer.utils.SpaceFormatter;
 
@@ -70,8 +72,12 @@ public class FileInfo {
 
     public boolean rename(String newName) {
         File newFile = new File(file.getParentFile(), newName);
+        boolean renamed = !newFile.exists() && file.renameTo(newFile);
 
-        return !newFile.exists() && file.renameTo(newFile);
+        if (renamed && isMedia())
+            FileExplorer.application.updateGallery(Uri.fromFile(newFile));
+
+        return renamed;
     }
 
     public boolean copy(FileInfo target, boolean delete) {
@@ -122,6 +128,9 @@ public class FileInfo {
 
             outputStream.flush();
 
+            if (isMedia())
+                FileExplorer.application.updateGallery(Uri.fromFile(target));
+
             return true;
         } catch (Exception e) {
             CrashUtils.report(e);
@@ -153,7 +162,12 @@ public class FileInfo {
             }
         }
 
-        return file.delete();
+        boolean isMedia = isMedia();
+        boolean deleted = file.delete();
+        if (deleted && isMedia)
+            FileExplorer.application.updateGallery(Uri.fromFile(file));
+
+        return deleted;
     }
 
     public boolean hasFiles() {
@@ -278,6 +292,10 @@ public class FileInfo {
         }
 
         return cachedIsVideo;
+    }
+
+    public boolean isMedia() {
+        return isImage() || isVideo();
     }
 
     public boolean isDirectory() {

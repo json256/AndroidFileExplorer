@@ -1,4 +1,5 @@
 .svn
+keystore.properties
 
 # Built application files
 *.apk

@@ -225,7 +225,7 @@ public class FolderFragment extends Fragment {
     }
 
     private Intent openFileIntent(Uri uri, String type) {
-        // content://com.illusory.fileexplorer.provider/external_files/emulated/0/3D_MEDIA/Edited.mp4
+        // content://com.illusory.fileexplorer.provider/external_files/3D_MEDIA/Edited.mp4
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, type);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
